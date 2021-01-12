@@ -1,0 +1,93 @@
+.order-list {
+	padding: 30rpx 30rpx 0;
+}
+
+.order-item {
+		background: #fff;
+		border-radius: 5px;
+		padding: 26rpx 28rpx;
+		margin-bottom: 30rpx;
+		position: relative;
+
+		.order-tag {
+			position: absolute;
+			top: 0;
+			right: 40rpx;
+			
+			image {
+				width: 40rpx;
+			}
+			.ing{
+				background: #FF8E06;
+				padding: 0 6rpx;
+				color: #FFFFFF;
+				font-size: 12rpx;
+				position: relative;
+				right: -20rpx;
+			}
+		}
+
+		.order-l {
+			width: 110rpx;
+			height: 110rpx;
+			border-radius: 50%;
+			background: #eee;
+			overflow: hidden;
+			image {
+				width: 100%;
+			}
+		}
+
+		.order-r {
+			width: calc(100% - 124rpx);
+
+			.order-name {
+				color: #2B2937;
+				font-size: 28rpx;
+				font-weight: bold;
+			}
+
+			.order-label {
+				margin-top: 16rpx;
+
+				view {
+					height: 33rpx;
+					line-height: 33rpx;
+					color: #fff;
+					font-size: 16rpx;
+					padding: 0 20rpx;
+					margin-right: 13rpx
+				}
+
+				&>view:nth-child(1) {
+					background: linear-gradient(165deg, #FFA008, #FF8305);
+					border-radius: 17px;
+				}
+
+				&>view:nth-child(2) {
+
+					background: linear-gradient(165deg, #01DAA5, #03B97E);
+					border-radius: 17px;
+				}
+			}
+
+			.pk-icon {
+				width: 78rpx;
+
+				image {
+					width: 78rpx;
+				}
+			}
+
+			.get-s {
+				margin-left: 36rpx;
+				color: #FF9507;
+				font-weight: 800;
+				font-size: 45rpx;
+
+				image {
+					width: 16rpx;
+				}
+			}
+		}
+	}
