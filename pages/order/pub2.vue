@@ -190,10 +190,10 @@
 							prevPage=pages[pages.length-2];
 						}
 						if(prevPage){
-							// #ifdef H5
-								prevPage.showLoading=true;
+							// #ifdef APP-PLUS || H5
+								prevPage.$vm.showLoading=true;
 							// #endif
-							// #ifdef APP-PLUS || MP-WEIXIN
+							// #ifdef MP-WEIXIN
 								prevPage.setData({
 									showLoading : true
 								})

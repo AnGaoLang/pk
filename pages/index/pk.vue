@@ -10,7 +10,7 @@
 			<view class="order-l"><image :src="tuijianData.avatar" mode="widthFix"></image></view>
 			<view class="order-r d-flex-jsb">
 				<view class="order-info">
-					<view class="order-name">{{ tuijianData.pk_name }}</view>
+					<view class="order-name">游戏名称：{{ tuijianData.pk_name }}<view class="greenBg" @tap="copy(tuijianData.pk_name)">一键复制</view></view>
 					<view class="order-label d-flex">
 						<view>{{ tuijianData.pk_format }}</view>
 						<view>{{ tuijianData.type_name }}</view>
@@ -45,14 +45,13 @@
 			</view>
 			<view class="pk" @click="showLoadingDialog">点击PK</view>
 		</view>
-		<view class="cover" v-show="showLoading">
+		<view v-show="showLoading" class="cover">
 			<view class="content">
-				<view class="title">已经确认</view>
+				<view class="title">{{showLoadText || '等待确认中'}}</view>
 				<view class="dialog-info">
-					<view>正在等待对手玩家确认开始</view>
-					<view>请稍后.</view>
+					{{showLoadContent || '正在等待对手玩家确认开始 请稍后.'}}
 				</view>
-				<view class="loading">
+				<view v-if="!showLoadText" class="loading">
 					<view :class="{ active: time > 0 }"></view>
 					<view :class="{ active: time > 1 }"></view>
 					<view :class="{ active: time > 2 }"></view>
@@ -60,19 +59,22 @@
 					<view :class="{ active: time > 4 }"></view>
 					<view :class="{ active: time > 5 }"></view>
 				</view>
+				<view v-else style="margin: auto;width: 44rpx;height:44rpx;" @tap="showLoading = false">
+					<image style="width: 100%;height:100%;" src="../../static/cuowublack.png"></image>
+				</view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-import socketIo from '../../common/socket.js';
-
 let timer = null;
 export default {
 	data() {
 		return {
 			showLoading: false,
+			showLoadText: '',
+			showLoadContent: '',
 			time: 0,
 			tuijianData: {},
 			pk_explain: ''
@@ -82,18 +84,55 @@ export default {
 		if (option.id) {
 			this.getTuijianDetails(option.id);
 		};
-		socketIo.on('new_msg', (msg) => {
+		if (this.$socketIo.disconnected) {
+			this.$socketIo.connect();
+		};
+		let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
+		this.$socketIo.on('connect', () => {
+			console.log(123123213)
+		  this.$socketIo.emit('login', uid)
+		});
+		this.$socketIo.on('new_msg', (msg) => {
+			console.log('msgpk', msg)
+			let message = msg && JSON.parse(msg);
 			if (message && message.data == 1) {
-				this.showLoading = false;
+				this.showLoadText = "对方确认";
+				this.showLoadContent = '对方确认接受你的PK 快去王者一决高下';
+				setTimeout(() => {
+					this.showLoading = false;
+					this.showLoadText = "";
+					this.showLoadContent = '';
+				}, 3000)
 				console.log('同意')
 			}
 			if (message && message.data == 0) {
-				this.showLoading = false;
+				this.showLoadText = "对方拒绝";
+				this.showLoadContent = '对方拒绝接受你的PK 去看看其他用户发布的挑战吧';
+				setTimeout(() => {
+					this.showLoading = false;
+					this.showLoadText = "";
+					this.showLoadContent = '';
+				}, 3000)
 				console.log('不同意')
 			}
 		});
 	},
+	onShow() {
+		if (this.showLoading) {
+			setTimeout(() => {
+				this.showLoading = false;
+				this.showLoadText = "";
+				this.showLoadContent = '';
+				this.$socketIo.disconnect();
+			}, 1000 * 120)
+		}
+	},
 	methods: {
+		copy(data) {
+			uni.setClipboardData({
+				data: data
+			});
+		},
 		// 返回
 		back(){
 			uni.navigateBack();
@@ -101,7 +140,7 @@ export default {
 		// 举报
 		jubao(){
 			uni.navigateTo({
-				url:'/pages/index/jubao?id='+this.tuijianData.user_id
+				url:'/pages/user/jubao?id='+this.tuijianData.user_id
 			})
 		},
 		showLoadingDialog() {
@@ -165,6 +204,16 @@ export default {
 			color: #2b2937;
 			font-size: 28rpx;
 			font-weight: bold;
+			.greenBg {
+				display: inline-block;
+				margin-left: 10rpx;
+				font-size: 20rpx;
+				padding: 2rpx 10rpx;
+				color: #fff;
+				font-weight: normal;
+				border-radius: 6rpx;
+				background: linear-gradient(#01DAA5, #03B97E);
+			}
 		}
 
 		.order-label {
@@ -289,7 +338,8 @@ export default {
 	}
 
 	.dialog-info {
-		margin-top: 25rpx;
+		width: 360rpx;
+		margin: 25rpx auto;
 		font-size: 30rpx;
 	}
 

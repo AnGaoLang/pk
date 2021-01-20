@@ -1,5 +1,15 @@
 <template>
-	<view>
+	<view style="position:relative;height: 100%">
+		<view v-if="show" class="dialog-mask" @tap="show = false">
+			<view class="dialog">
+				<view class="dialog-content">
+					<view class="dialog-detail">
+						<image style="width: 100%;height: 100%;" mode="widthFix" src="../../static/kefu.png"></image>
+					</view>
+					<view class="dialog-bottom">{{telephone}}</view>
+				</view>
+			</view>
+		</view>
 		<view class="user-tab">
 			<image src="../../static/user-bg.png" mode="widthFix"></image>
 			<view class="user-tag">
@@ -67,7 +77,7 @@
 					<image src="../../static/you.png" mode="widthFix"></image>
 				</view>
 			</view>
-			<view class="opt-item d-flex-jsb">
+			<view class="opt-item d-flex-jsb" @tap="show = true">
 				<view class="opt-l d-flex">
 					<view class="opt-icon">
 						<image src="../../static/l6.png" mode="widthFix"></image>
@@ -98,12 +108,15 @@
 	export default {
 		data() {
 			return {
+				show: false,
 				userInfo: {},
+				telephone: '',
 			};
 		},
 		
 		onLoad() {
 			this.myinfo();
+			this.getKefu();
 		},
 		
 		methods: {
@@ -121,7 +134,14 @@
 					url,
 				})
 			},
-			
+			getKefu() {
+				this.$utils.postrequest('/api/my/customer_service', {}, res => {
+					console.log(res);
+					if (res.code === 200) {
+						this.telephone = res.data;
+					}
+				})
+			},
 			invite() {
 				uni.reLaunch({
 					url: '../index/invite'
@@ -132,6 +152,49 @@
 </script>
 
 <style lang="less">
+page {
+	height: 100%;
+}
+</style>
+<style lang="less">
+	.dialog-mask {
+		background: rgba(0, 0, 0, 0.5);
+		position: absolute;
+		z-index: 999;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+	.dialog {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 1000;
+		padding: 20rpx 20rpx 50rpx 20rpx;
+		width: 540rpx;
+		height: 640rpx;
+		background: #fff;
+		border-radius: 20rpx;
+		box-sizing: border-box;
+		text-align: center;
+		.dialog-detail {
+			width: 500rpx;
+			height: 430rpx;
+		}
+		.dialog-bottom {
+			margin: 20rpx auto;
+			width: 400rpx;
+			height: 100rpx;
+			line-height: 100rpx;
+			border-radius: 10rpx;
+			text-align: center;
+			color: #fff;
+			font-size: 32rpx;
+			background: linear-gradient(#01DAA5, #03B97E);
+		}
+	}
 	.user-info {
 		color: #fff;
 		

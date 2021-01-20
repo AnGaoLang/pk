@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view style="position:relative;height: 100%">
 		<view class="wallet-bg">
 			<image class="b1" src="../../static/wallet-bg.png" mode="widthFix"></image>
 			<view class="wallet-info">
@@ -15,7 +15,7 @@
 			<view class="input d-flex-jsb">
 				<view class="input-l d-flex">
 					<image src="../../static/amount.png" mode="widthFix"></image>
-					<input type="text" v-model="wdl_price" auto-focus>
+					<input type="number" v-model="wdl_price" auto-focus>
 				</view>
 				<view class="clear" @click="clearAmount">
 					<image src="../../static/clear.png" mode="widthFix"></image>
@@ -53,6 +53,18 @@
 			
 			<view class="pk" @click="withdrawAdd">确认提现</view>
 		</view>
+		
+		<view v-if="show" class="dialog-mask" @tap="show = false">
+			<view class="dialog">
+				<view class="dialog-content">
+					<view class="dialog-detail">
+						<image style="width: 100%;height: 100%;" mode="widthFix" src="../../static/withDraw.png"></image>
+					</view>
+					<view class="dialog-text">客服微信</view>
+					<view class="dialog-bottom">{{telephone}}</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -60,7 +72,9 @@
 	export default {
 		data() {
 			return {
-				wdl_price: 0,
+				telephone: '',
+				show: false,
+				wdl_price: '',
 				money: 0,
 				wdl_type: 1,
 			};
@@ -68,6 +82,7 @@
 		
 		onShow() {
 			this.withdraw();
+			this.getKefu();
 		},
 		
 		watch: {
@@ -85,9 +100,20 @@
 			setType(type) {
 				this.wdl_type = type;
 			},
+			getKefu() {
+				this.$utils.postrequest('/api/my/customer_service', {}, res => {
+					console.log(res);
+					if (res.code === 200) {
+						this.telephone = res.data;
+					}
+				})
+			},
 			withdrawAdd() {
 				let {wdl_type, wdl_price, money} = this;
-				
+				if (wdl_type == 1) {
+					this.show = true;
+					return;
+				}
 				if (parseFloat(wdl_price) <= 0) {
 					this.$utils.showLayer('暂无可提现余额');
 					return;
@@ -101,6 +127,10 @@
 					this.$utils.showLayer(res.message);
 					if (res.code === 200) {
 						this.withdraw()
+					} else if (res.code === 304) {
+						uni.navigateTo({
+							url: '/pages/user/edit-info'
+						})
 					}
 				})
 			},
@@ -118,6 +148,11 @@
 	}
 </script>
 
+<style lang="less">
+page {
+	height: 100%;
+}
+</style>
 <style lang="less">
 	.wallet-bg {
 		position: relative;
@@ -245,5 +280,50 @@
 		border-radius: 57px;
 		color: #FFFFFF;
 		margin-top: 114rpx;
+	}
+	
+	.dialog-mask {
+		background: rgba(0, 0, 0, 0.5);
+		position: absolute;
+		z-index: 999;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+	.dialog {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 1000;
+		padding: 20rpx 20rpx 50rpx 20rpx;
+		width: 540rpx;
+		height: 640rpx;
+		background: #fff;
+		border-radius: 20rpx;
+		box-sizing: border-box;
+		text-align: center;
+		.dialog-detail {
+			width: 500rpx;
+			height: 380rpx;
+		}
+		.dialog-text {
+			font-size: 36rpx;
+			color: #333;
+			line-height: 68rpx;
+			letter-spacing: 20rpx;
+		}
+		.dialog-bottom {
+			margin: 20rpx auto;
+			width: 400rpx;
+			height: 100rpx;
+			line-height: 100rpx;
+			border-radius: 10rpx;
+			text-align: center;
+			color: #fff;
+			font-size: 32rpx;
+			background: linear-gradient(#01DAA5, #03B97E);
+		}
 	}
 </style>

@@ -63,7 +63,7 @@
 				money: 0,
 				price: 50,
 				custom: "",
-				type: 1
+				type: 2
 			}
 		},
 		onShow() {
@@ -85,7 +85,30 @@
 					return;
 				}
 				this.$utils.postrequest('/api/user/wallet/pay_order', {price, type}, res => {
-					
+					if (res.code === 200) {
+						if (this.type == 2) {
+							this.$utils.postrequest('/api/user/wallet/alipay', {order_id: res.data}, res => {
+								if (res.code === 200) {
+									uni.requestPayment({
+										provider: 'alipay',
+										orderInfo: res.data,
+										success: function (res) {
+											console.log('success:' + JSON.stringify(res));
+										},
+										fail: function (err) {
+											console.log('fail:' + JSON.stringify(err));
+										}
+									});
+								} else {
+									this.$utils.showLayer(res.message);
+								}
+							})
+						} else {
+							console.log('微信支付')
+						}
+					} else {
+						this.$utils.showLayer(res.message);
+					}
 				})
 			},
 			

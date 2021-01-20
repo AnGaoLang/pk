@@ -15,12 +15,12 @@
 					<input type="password" v-model="password" placeholder="请输入您的密码">
 				</view>
 			</view>
-			<view class="forget">忘记密码</view>
+			<view class="forget" @click="toReg">忘记密码</view>
 			<view class="login-btn" @click="login">登录</view>
 		</view>
 		<view class="third-login">
 			<view class="">第三方账号登录</view>
-			<view class="wx">
+			<view class="wx" @tap="wxLogin">
 				<image src="../../static/wx.png" mode="widthFix"></image>
 			</view>
 		</view>
@@ -51,6 +51,32 @@
 		},
 		
 		methods: {
+			wxLogin() {
+				uni.login({
+				  provider: 'weixin',
+				  success: (loginRes) => {
+				    console.log(loginRes.authResult);
+				    let paramData = {
+				    	code: loginRes.code,
+				    };
+				    this.$utils.request('/api/login', paramData, (res) => {
+				    	if (res.code == 200) {
+				    		uni.setStorageSync('token', res.data.token);
+				    		uni.setStorageSync('avatar', res.data.avatar);
+				    		uni.setStorageSync('nickname', res.data.nickname);
+				    		uni.setStorageSync('userId', res.data.id);
+				    		uni.setStorageSync('sex', res.data.sex);
+				    		uni.setStorageSync('userInfo', JSON.stringify(res.data));
+				    		uni.reLaunch({
+				    			url: '/pages/index/index'
+				    		});
+				    	} else {
+				    		this.$utils.showLayer(res.message);
+				    	}
+				    });
+				  }
+				});
+			},
 			login(){
 				let that= this;
 				/* uni.switchTab({

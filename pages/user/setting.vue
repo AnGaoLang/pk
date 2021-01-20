@@ -102,6 +102,9 @@
 			},
 			// 退出登录
 			loginOut(){
+				this.$socketIo.disconnect()
+				// let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
+				// this.$socketIo.emit('disconnect', uid);
 				uni.clearStorageSync();
 				uni.reLaunch({
 					url: '/pages/user/login'

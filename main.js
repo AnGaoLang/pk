@@ -2,7 +2,8 @@ import Vue from 'vue'
 import App from './App'
 import utils from './utils/util'
 import url from './common/config.js'
-import socket from './common/socket-io.js'
+import socketIo from './common/socket.js'
+
 
 import uniFooters from "@/components/uni-footers.vue"
 import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
@@ -12,7 +13,7 @@ Vue.config.productionTip = false
 
 Vue.prototype.$utils = utils
 Vue.prototype.$url = url
-Vue.prototype.$socket = socket
+Vue.prototype.$socketIo = socketIo
 
 Vue.component('uni-footers', uniFooters)
 Vue.component('uni-nav-bar', uniNavBar)

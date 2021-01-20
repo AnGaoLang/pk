@@ -31,7 +31,21 @@
 					<image src="../../static/you.png" mode="widthFix"></image>
 				</view>
 			</view>
-
+			<view class="user-info-item h2 d-flex-jsb">
+				<view class="item-l">真实姓名</view>
+				<view class="item-r d-flex">
+					<input type="text" placeholder="提现支付宝需要真实姓名" v-model="userInfo.alipay_name">
+					<image src="../../static/you.png" mode="widthFix"></image>
+				</view>
+			</view>
+			<view class="user-info-item h2 d-flex-jsb">
+				<view class="item-l">支付宝账号</view>
+				<view class="item-r d-flex">
+					<input type="text" placeholder="提现到支付宝的账号" v-model="userInfo.alipay_account">
+					<image src="../../static/you.png" mode="widthFix"></image>
+				</view>
+			</view>
+			
 			<view class="pk" @click="sureEdit">点击确认</view>
 		</view>
 	</view>
@@ -105,6 +119,8 @@
 					avatar:this.userInfo.avatar,
 					name:this.userInfo.name,
 					mobile:this.userInfo.mobile,
+					alipay_name: this.userInfo.alipay_name,
+					alipay_account: this.userInfo.alipay_account,
 				}
 				if(this.password!='******'){
 					obj.password = this.password

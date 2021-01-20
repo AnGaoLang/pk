@@ -22,7 +22,8 @@
         /* 模块配置 */
         "modules" : {
             "OAuth" : {},
-            "Share" : {}
+            "Share" : {},
+            "Payment" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -40,16 +41,15 @@
                     "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
-                    "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
+                    "<uses-permission android:name=\"android.permission.INTERNET\"/>",
                     "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
                     "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
-                    "<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
                     "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
                     "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
-                    "<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ]
             },
@@ -60,14 +60,24 @@
                 "ad" : {},
                 "oauth" : {
                     "weixin" : {
-                        "appid" : "wx9b37378f50505469",
-                        "appsecret" : "49e438c10bdbd9b4c39044a728d6bbb6",
+                        "appid" : "wxec196ca61616173c",
+                        "appsecret" : "c5e7f94cc73bd8983b1d96e7a49f9c02",
                         "UniversalLinks" : ""
                     }
                 },
                 "share" : {
                     "weixin" : {
-                        "appid" : "wx9b37378f50505469",
+                        "appid" : "wxec196ca61616173c",
+                        "UniversalLinks" : ""
+                    }
+                },
+                "payment" : {
+                    "alipay" : {
+                        "__platform__" : [ "ios", "android" ]
+                    },
+                    "weixin" : {
+                        "__platform__" : [ "ios", "android" ],
+                        "appid" : "wxec196ca61616173c",
                         "UniversalLinks" : ""
                     }
                 }
@@ -76,9 +86,9 @@
                 "androidStyle" : "default",
                 "iosStyle" : "common",
                 "android" : {
-                    "xhdpi" : "C:/Users/Administrator/Desktop/star1.png",
-                    "hdpi" : "C:/Users/Administrator/Desktop/star1.png",
-                    "xxhdpi" : "C:/Users/Administrator/Desktop/star1.png"
+                    "xhdpi" : "static/open.png",
+                    "hdpi" : "static/open.png",
+                    "xxhdpi" : "static/open.png"
                 },
                 "ios" : {
                     "iphone" : {
@@ -109,33 +119,33 @@
             },
             "icons" : {
                 "android" : {
-                    "hdpi" : "unpackage/res/icons/72x72.png",
-                    "xhdpi" : "unpackage/res/icons/96x96.png",
-                    "xxhdpi" : "unpackage/res/icons/144x144.png",
-                    "xxxhdpi" : "unpackage/res/icons/192x192.png"
+                    "hdpi" : "static/icon.png",
+                    "xhdpi" : "static/icon.png",
+                    "xxhdpi" : "static/icon.png",
+                    "xxxhdpi" : "static/icon.png"
                 },
                 "ios" : {
-                    "appstore" : "unpackage/res/icons/1024x1024.png",
+                    "appstore" : "static/icon.png",
                     "ipad" : {
-                        "app" : "unpackage/res/icons/76x76.png",
-                        "app@2x" : "unpackage/res/icons/152x152.png",
-                        "notification" : "unpackage/res/icons/20x20.png",
-                        "notification@2x" : "unpackage/res/icons/40x40.png",
-                        "proapp@2x" : "unpackage/res/icons/167x167.png",
-                        "settings" : "unpackage/res/icons/29x29.png",
-                        "settings@2x" : "unpackage/res/icons/58x58.png",
-                        "spotlight" : "unpackage/res/icons/40x40.png",
-                        "spotlight@2x" : "unpackage/res/icons/80x80.png"
+                        "app" : "static/icon.png",
+                        "app@2x" : "static/icon.png",
+                        "notification" : "static/icon.png",
+                        "notification@2x" : "static/icon.png",
+                        "proapp@2x" : "static/icon.png",
+                        "settings" : "static/icon.png",
+                        "settings@2x" : "static/icon.png",
+                        "spotlight" : "static/icon.png",
+                        "spotlight@2x" : "static/icon.png"
                     },
                     "iphone" : {
-                        "app@2x" : "unpackage/res/icons/120x120.png",
-                        "app@3x" : "unpackage/res/icons/180x180.png",
-                        "notification@2x" : "unpackage/res/icons/40x40.png",
-                        "notification@3x" : "unpackage/res/icons/60x60.png",
-                        "settings@2x" : "unpackage/res/icons/58x58.png",
-                        "settings@3x" : "unpackage/res/icons/87x87.png",
-                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
-                        "spotlight@3x" : "unpackage/res/icons/120x120.png"
+                        "app@2x" : "static/icon.png",
+                        "app@3x" : "static/icon.png",
+                        "notification@2x" : "static/icon.png",
+                        "notification@3x" : "static/icon.png",
+                        "settings@2x" : "static/icon.png",
+                        "settings@3x" : "static/icon.png",
+                        "spotlight@2x" : "static/icon.png",
+                        "spotlight@3x" : "static/icon.png"
                     }
                 }
             }

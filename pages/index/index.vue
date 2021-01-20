@@ -11,22 +11,34 @@
 						<view class="avator-right">
 							<view class="avator-right-title">
 								<view>{{dialog.pk_name}}</view>
-								<view class="greenBg">一键复制</view>
+								<view class="greenBg" @tap="copy(dialog.pk_name)">一键复制</view>
 							</view>
 							<view class="grade greenBg">{{dialog.type_name}}</view>
 						</view>
 					</view>
+					<view class="dialog-image">
+						<image style="width: 100%;height: 100%;" :src="dialog.game_home_image"></image>
+					</view>
 					<view class="dialog-detail">
-						<view>1.请到王者→设置→隐私设置→战绩显示→打开</view>
-						<view>2.如发现游戏主页面与游戏ID不符请放弃该PK</view>
-						<view>3.请勿脱离平台交易</view>
-						<view>4.可以选择双方确定开始PK后在进入游戏， 客服会根据实际的比赛记录判定，如果无属实记录会自动退回余额</view>
+						<view>温馨提示!</view>
+						<view>请认真审核对方游戏名称,若游戏内非该游戏名称，请放弃接单！</view>
 					</view>
 					<view class="dialog-bottom">
-						<view @tap="cancel">取消</view>
+						<view @tap="cancel">拒绝</view>
 						<view @tap="confirmDialog">确认</view>
 					</view>
 				</view>
+			</view>
+		</view>
+		<view v-if="!!upload" class="dialog-mask">
+			<view class="uplod">
+				<image mode="heightFix" :src="uploadImage || '../../static/upload_demo.png'" @tap="uploadSnapShot"></image>
+				<view class="upload-tip">
+					<view>上传游戏截图</view>
+					<view>接单任务完成需要上传比赛截图 后台判断输赢</view>
+				</view>
+				<view class="upload-btn" @tap="uploadConfirm">提交</view>
+				<image class="upload-close" src="../../static/cuowu.png" @tap="upload = false"></image>
 			</view>
 		</view>
 		<view class="leval-tab d-flex">
@@ -76,13 +88,14 @@
 </template>
 
 <script>
-	import socketIo from '../../common/socket.js';
-	
 	export default {
 		data() {
 			return {
 				timer: null,
 				dialog: false,
+				upload: false,
+				uploadId: '',
+				uploadImage: '',
 				statusBar: 0,
 				active: 99,
 				title: 'Hello',
@@ -94,14 +107,18 @@
 			}
 		},
 		onLoad() {
+			if (this.$socketIo.disconnected) {
+				this.$socketIo.connect();
+			};
 			let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
-			socketIo.on('connect', () => {
-				console.log('connect')
-			  socketIo.emit('login', uid);
+			this.$socketIo.on('connect', () => {
+				console.log(123123213)
+			  this.$socketIo.emit('login', uid)
 			});
-			console.log(socketIo)
-			socketIo.on('new_msg', (msg) => {
+			this.$socketIo.emit('login', uid)
+			this.$socketIo.on('new_msg', (msg) => {
 				let message = msg && JSON.parse(msg);
+				console.log(message)
 				if (message && message.order_user) {
 					this.dialog = message.order_user;
 					clearTimeout(this.timer)
@@ -109,18 +126,24 @@
 						this.dialog = null;
 					}, 2 * 60 * 1000)
 				}
-				if (message && message.data == 1) {
-					console.log('同意')
-				}
-				if (message && message.data == 0) {
-						console.log('不同意')
-				}
 			});
 			this.statusBar = uni.getSystemInfoSync().statusBarHeight;
+			this.showUpload();
+			this.getTuijian();
+			this.getTuijianList();
+		},
+		onPullDownRefresh() {
+			this.statusBar = uni.getSystemInfoSync().statusBarHeight;
+			this.showUpload();
 			this.getTuijian();
 			this.getTuijianList();
 		},
 		methods: {
+			copy(data) {
+				uni.setClipboardData({
+					data: data
+				});
+			},
 			cancel() {
 				this.$utils.request('/', {
 					type: 'release_no',
@@ -138,6 +161,75 @@
 				}, (res) => {
 					this.dialog = null;
 				}, 'http://45.125.45.234:5557');
+			},
+			showUpload() {
+				let that= this;
+				this.$utils.request('api/index/pk_upload_result', {}, function(res) {
+					if (res.code == 200) {
+						that.upload = res.data.is_screenshot == 1;
+						that.uploadId = res.data.id;
+					} else {
+						that.$utils.showLayer(res.message);
+					}
+				});
+			},
+			uploadSnapShot() {
+				var that = this
+				uni.chooseImage({ //选中本地图片
+					count: 1,
+					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+					sourceType: ['album'], //从相册选择
+					success: res => {
+						uni.showLoading({ //加载框
+							title: '加载中...'
+						})
+						const tempFilePaths = res.tempFilePaths;
+							uni.uploadFile({
+								// url: 'http://vr.hualin688.com/api/upload', //上传接口地址
+								url: that.$url.url_config+'api/upload', //上传接口地址
+								filePath: tempFilePaths[0],
+								name: 'file',
+								header:{
+									"Authorization": 'Bearer ' + wx.getStorageSync('token')
+								},
+								success: (res) => {
+									let data = JSON.parse(res.data);
+									uni.hideLoading();
+									if(data.code==200){
+										that.uploadImage = data.data;
+									}else{
+										uni.showToast({
+											title: res.message,
+											icon:'none',
+											duration: 2000
+										});
+									}
+								},
+								fail(err) {
+									uni.hideLoading();
+									console.log(err);
+									uni.showToast({
+										title: '上传失败',
+										icon:'none',
+										duration: 2000
+									});
+								}
+							});
+					}
+				});
+			},
+			uploadConfirm() {
+				var that = this
+				that.$utils.postrequest('api/index/pk_submit', {
+					id: that.uploadId,
+					image: that.uploadImage,
+				}, function(res) {
+					if (res.code == 200) {
+						that.upload = false;
+					} else {
+						that.$utils.showLayer(res.message);
+					}
+				});
 			},
 			toDetail(data) {
 				uni.navigateTo({
@@ -234,7 +326,7 @@
 					width: 110rpx;
 					height: 110rpx;
 					border-radius: 100%;
-					background: red;
+					border: 1px solid #fafafa;
 				}
 				.avator-right {
 					.grade {
@@ -262,6 +354,10 @@
 						
 					}
 				}
+			}
+			.dialog-image {
+				width: 100%;
+				height: 220rpx;
 			}
 			.dialog-detail {
 				margin-top: 45rpx;
@@ -293,6 +389,56 @@
 				color: #fff;
 				background: linear-gradient(#01DAA5, #03B97E);
 			}
+		}
+	}
+	.uplod {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 1000;
+		padding: 90rpx 30rpx 40rpx;
+		width: 520rpx;
+		height: 690rpx;
+		height: ;
+		background: #fff;
+		border-radius: 50rpx;
+		box-sizing: border-box;
+		text-align: center;
+		image {
+			margin-bottom: 30rpx;
+			width: auto;
+			height: 260rpx;
+		}
+		.upload-tip {
+			margin: auto;
+			font-size: 38rpx;
+			text-align: center;
+			view:last-child {
+				margin: auto;
+				width: 70%;
+				margin-top: 20rpx;
+				font-size: 24rpx;
+				color: #B8B8B8;
+			}
+		}
+		.upload-btn {
+			margin: auto;
+			display: inline-block;
+			padding: 25rpx 110rpx;
+			margin-top: 30rpx;
+			font-size: 38rpx;
+			color: #fff;
+			border-radius: 100rpx;
+			background: linear-gradient(#01DAA5, #03B97E);
+		}
+		.upload-close {
+			position: absolute;
+			bottom: -110rpx;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 50rpx;
+			height: 50rpx;
 		}
 	}
 	.leval-tab {
@@ -375,6 +521,7 @@
 			height: 110rpx;
 			border-radius: 50%;
 			background: #eee;
+			overflow: hidden;
 
 			image {
 				width: 100%;
