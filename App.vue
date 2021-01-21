@@ -1,9 +1,32 @@
 <script>
 	export default {
+		data() {
+			return {
+				timer: '',
+			}
+		},
 		onLaunch: function() {
 		},
 		onShow: function() {
-			// console.log('App Show')
+			if (this.$socketIo.disconnected) {
+				this.$socketIo.connect();
+			};
+			let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
+			console.log('awere')
+			this.$socketIo.on('connect', () => {
+				console.log(111111111)
+			  uid && this.$socketIo.emit('login', uid)
+			});
+			this.$socketIo.on('new_msg', (msg) => {
+				let message = msg && JSON.parse(msg);
+				console.log(message)
+				if (message && message.order_user) {
+					
+						uni.navigateTo({
+							url: `/pages/nVue/index?dialog=${JSON.stringify(message.order_user)}`
+						})
+				}
+			});
 		},
 		onHide: function() {
 			// console.log('App Hide')

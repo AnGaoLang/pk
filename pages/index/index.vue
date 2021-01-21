@@ -1,35 +1,5 @@
 <template>
 	<view class="" :style="`position:relative;height: 100%;padding-top: ${statusBar}px;`">
-		<view v-if="!!dialog" class="dialog-mask">
-			<view class="dialog">
-				<view class="dialog-head">确认开始</view>
-				<view class="dialog-content">
-					<view class="avator">
-						<view class="avator-left">
-							<image style="width: 100%;height: 100%;" :src="dialog.user_avatar"></image>
-						</view>
-						<view class="avator-right">
-							<view class="avator-right-title">
-								<view>{{dialog.pk_name}}</view>
-								<view class="greenBg" @tap="copy(dialog.pk_name)">一键复制</view>
-							</view>
-							<view class="grade greenBg">{{dialog.type_name}}</view>
-						</view>
-					</view>
-					<view class="dialog-image">
-						<image style="width: 100%;height: 100%;" :src="dialog.game_home_image"></image>
-					</view>
-					<view class="dialog-detail">
-						<view>温馨提示!</view>
-						<view>请认真审核对方游戏名称,若游戏内非该游戏名称，请放弃接单！</view>
-					</view>
-					<view class="dialog-bottom">
-						<view @tap="cancel">拒绝</view>
-						<view @tap="confirmDialog">确认</view>
-					</view>
-				</view>
-			</view>
-		</view>
 		<view v-if="!!upload" class="dialog-mask">
 			<view class="uplod">
 				<image mode="heightFix" :src="uploadImage || '../../static/upload_demo.png'" @tap="uploadSnapShot"></image>
@@ -91,8 +61,6 @@
 	export default {
 		data() {
 			return {
-				timer: null,
-				dialog: false,
 				upload: false,
 				uploadId: '',
 				uploadImage: '',
@@ -112,20 +80,8 @@
 			};
 			let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
 			this.$socketIo.on('connect', () => {
-				console.log(123123213)
+				console.log(222222222)
 			  this.$socketIo.emit('login', uid)
-			});
-			this.$socketIo.emit('login', uid)
-			this.$socketIo.on('new_msg', (msg) => {
-				let message = msg && JSON.parse(msg);
-				console.log(message)
-				if (message && message.order_user) {
-					this.dialog = message.order_user;
-					clearTimeout(this.timer)
-					this.timer = setTimeout(() => {
-						this.dialog = null;
-					}, 2 * 60 * 1000)
-				}
 			});
 			this.statusBar = uni.getSystemInfoSync().statusBarHeight;
 			this.showUpload();
@@ -139,29 +95,6 @@
 			this.getTuijianList();
 		},
 		methods: {
-			copy(data) {
-				uni.setClipboardData({
-					data: data
-				});
-			},
-			cancel() {
-				this.$utils.request('/', {
-					type: 'release_no',
-					uid: this.dialog.user_id,
-					pk_id: this.dialog.pk_id,
-				}, (res) => {
-					this.dialog = null;
-				}, 'http://45.125.45.234:5557');
-			},
-			confirmDialog() {
-				this.$utils.request('/', {
-					type: 'release_yes',
-					uid: this.dialog.user_id,
-					pk_id: this.dialog.pk_id,
-				}, (res) => {
-					this.dialog = null;
-				}, 'http://45.125.45.234:5557');
-			},
 			showUpload() {
 				let that= this;
 				this.$utils.request('api/index/pk_upload_result', {}, function(res) {

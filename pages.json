@@ -204,7 +204,22 @@
                 "enablePullDownRefresh": false
             }
             
-        }
+        },
+				{
+					"path" : "pages/nVue/index",
+					"style" :                                                                                    
+					{
+							"navigationBarTitleText": "",
+							"enablePullDownRefresh": false,
+							"navigationStyle": "custom",
+							"app-plus": {  
+								"animationType": "fade-in",  
+								"background": "transparent",  
+								"backgroundColor": "rgba(0,0,0,0)",  
+								"popGesture": "none"  
+							}
+					}
+				}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
