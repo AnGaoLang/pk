@@ -8,23 +8,29 @@
 		onLaunch: function() {
 		},
 		onShow: function() {
+			let userInfo = uni.getStorageSync('userInfo');
+			let uid = userInfo ? JSON.parse(uni.getStorageSync('userInfo')).id : '';
 			if (this.$socketIo.disconnected) {
 				this.$socketIo.connect();
+				this.$socketIo.on('connect', () => {
+					console.log(111111111)
+				  uid && this.$socketIo.emit('login', uid)
+				});
+			} else {
+				this.$socketIo.emit('login', uid)
 			};
-			let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
-			console.log('awere')
-			this.$socketIo.on('connect', () => {
-				console.log(111111111)
-			  uid && this.$socketIo.emit('login', uid)
-			});
 			this.$socketIo.on('new_msg', (msg) => {
 				let message = msg && JSON.parse(msg);
 				console.log(message)
 				if (message && message.order_user) {
-					
-						uni.navigateTo({
-							url: `/pages/nVue/index?dialog=${JSON.stringify(message.order_user)}`
-						})
+					if (!this.timer) {
+						this.timer = setTimeout(() => {
+							this.timer = null;
+							uni.navigateTo({
+								url: `/pages/nVue/index?dialog=${JSON.stringify(message.order_user)}`
+							})
+						}, 500)
+					}
 				}
 			});
 		},

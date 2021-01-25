@@ -62,8 +62,8 @@
 		data() {
 			return {
 				upload: false,
-				uploadId: '',
 				uploadImage: '',
+				uploadId: '',
 				statusBar: 0,
 				active: 99,
 				title: 'Hello',
@@ -75,14 +75,16 @@
 			}
 		},
 		onLoad() {
+			let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
 			if (this.$socketIo.disconnected) {
 				this.$socketIo.connect();
+				this.$socketIo.on('connect', () => {
+					console.log(222222222)
+				  this.$socketIo.emit('login', uid)
+				});
+			} else {
+				this.$socketIo.emit('login', uid)
 			};
-			let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
-			this.$socketIo.on('connect', () => {
-				console.log(222222222)
-			  this.$socketIo.emit('login', uid)
-			});
 			this.statusBar = uni.getSystemInfoSync().statusBarHeight;
 			this.showUpload();
 			this.getTuijian();

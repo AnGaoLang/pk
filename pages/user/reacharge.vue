@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view style="position:relative;height: 100%">
 		<view class="wallet-bg">
 			<image class="b1" src="../../static/wallet-bg.png" mode="widthFix"></image>
 			<view class="wallet-info">
@@ -53,6 +53,18 @@
 
 			<view class="pk" @click="recharge">确认充值</view>
 		</view>
+		
+		<view v-if="show" class="dialog-mask" @tap="show = false">
+			<view class="dialog">
+				<view class="dialog-content">
+					<view class="dialog-detail">
+						<image style="width: 100%;height: 100%;" mode="widthFix" src="../../static/withDraw.png"></image>
+					</view>
+					<view class="dialog-text">客服微信</view>
+					<view class="dialog-bottom">{{telephone}}</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -60,6 +72,8 @@
 	export default {
 		data() {
 			return {
+				telephone: '',
+				show: false,
 				money: 0,
 				price: 50,
 				custom: "",
@@ -68,6 +82,7 @@
 		},
 		onShow() {
 			this.withdraw();
+			this.getKefu();
 		},
 		methods: {
 			withdraw() {
@@ -77,13 +92,25 @@
 					}
 				})
 			},
-			
+			getKefu() {
+				this.$utils.postrequest('/api/my/customer_service', {}, res => {
+					console.log(res);
+					if (res.code === 200) {
+						this.telephone = res.data;
+					}
+				})
+			},
 			recharge() {
-				let {price, type} = this;
+				let { type } = this;
+				if (type == 1) {
+					this.show = true;
+					return;
+				};
+				let price = Number(this.custom) || this.price;
 				if (parseFloat(price) <= 0) {
 					this.$utils.showLayer('请填写正确的金额');
 					return;
-				}
+				};
 				this.$utils.postrequest('/api/user/wallet/pay_order', {price, type}, res => {
 					if (res.code === 200) {
 						if (this.type == 2) {
@@ -111,19 +138,22 @@
 					}
 				})
 			},
-			
 			setPrice(amount) {
 				this.custom = "";
 				this.price = amount;
 			},
-			
 			setType(type) {
 				this.type = type;
 			},
 		},
 		
 		watch: {
-			custom() {
+			custom(value) {
+				if (Number(value)) {
+					this.price = '';
+				} else {
+					this.price = 50;
+				};
 				this.custom = '' + this.custom
 				if (this.custom.includes('.')) {
 					setTimeout(_ => {
@@ -261,6 +291,50 @@
 				height: 103rpx;
 				width: 100%;
 			}
+		}
+	}
+	.dialog-mask {
+		background: rgba(0, 0, 0, 0.5);
+		position: absolute;
+		z-index: 999;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+	.dialog {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 1000;
+		padding: 20rpx 20rpx 50rpx 20rpx;
+		width: 540rpx;
+		height: 640rpx;
+		background: #fff;
+		border-radius: 20rpx;
+		box-sizing: border-box;
+		text-align: center;
+		.dialog-detail {
+			width: 500rpx;
+			height: 380rpx;
+		}
+		.dialog-text {
+			font-size: 36rpx;
+			color: #333;
+			line-height: 68rpx;
+			letter-spacing: 20rpx;
+		}
+		.dialog-bottom {
+			margin: 20rpx auto;
+			width: 400rpx;
+			height: 100rpx;
+			line-height: 100rpx;
+			border-radius: 10rpx;
+			text-align: center;
+			color: #fff;
+			font-size: 32rpx;
+			background: linear-gradient(#01DAA5, #03B97E);
 		}
 	}
 </style>

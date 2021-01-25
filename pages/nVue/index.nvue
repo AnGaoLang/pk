@@ -73,6 +73,7 @@
 					uid: this.dialog.user_id,
 					pk_id: this.dialog.pk_id,
 				}, (res) => {
+					console.log(res)
 					this.hide();
 				}, 'http://45.125.45.234:5557');
 			},

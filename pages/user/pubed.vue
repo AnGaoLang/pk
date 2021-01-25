@@ -1,14 +1,25 @@
 <template>
 	<view style="position:relative;height: 100%">
-		<view v-if="!!curItem" class="dialog-mask">
+		<view v-if="!!upload" class="dialog-mask">
+			<view class="uplod">
+				<image mode="aspectFit" :src="uploadImage || '../../static/upload_demo.png'" @tap="uploadSnapShot"></image>
+				<view class="upload-tip">
+					<view>上传游戏截图</view>
+					<view>接单任务完成需要上传比赛截图 后台判断输赢</view>
+				</view>
+				<view class="upload-btn" @tap="uploadConfirm">提交</view>
+				<image class="upload-close" src="../../static/cuowu.png" @tap="upload = false"></image>
+			</view>
+		</view>
+		<view v-if="!!curItem" class="dialog-mask" @tap="curItem = false">
 			<view class="dialog">
 				<view class="dialog-content">
 					<view class="dialog-detail">
 						点击选择
 					</view>
 					<view class="dialog-bottom">
-						<view @tap="del">删除任务</view>
-						<view @tap="goDetail">查看详情</view>
+						<view @tap.stop="del">删除任务</view>
+						<view @tap.stop="goDetail">查看详情</view>
 					</view>
 				</view>
 			</view>
@@ -53,6 +64,9 @@
 	export default {
 		data() {
 			return {
+				upload: false,
+				uploadImage: '',
+				uploadId: '',
 				curItem: false,
 				page: 1,
 				isData: true,
@@ -66,6 +80,74 @@
 		},
 		
 		methods:{
+			showUpload(callback) {
+				this.$utils.request('api/index/pk_upload_result', {}, (res) => {
+					if (res.code == 200) {
+						this.uploadId = res.data.id;
+						callback();
+					} else {
+						this.$utils.showLayer(res.message);
+					}
+				});
+			},
+			uploadSnapShot() {
+				var that = this
+				uni.chooseImage({ //选中本地图片
+					count: 1,
+					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+					sourceType: ['album'], //从相册选择
+					success: res => {
+						uni.showLoading({ //加载框
+							title: '加载中...'
+						})
+						const tempFilePaths = res.tempFilePaths;
+							uni.uploadFile({
+								// url: 'http://vr.hualin688.com/api/upload', //上传接口地址
+								url: that.$url.url_config+'api/upload', //上传接口地址
+								filePath: tempFilePaths[0],
+								name: 'file',
+								header:{
+									"Authorization": 'Bearer ' + wx.getStorageSync('token')
+								},
+								success: (res) => {
+									let data = JSON.parse(res.data);
+									uni.hideLoading();
+									if(data.code==200){
+										that.uploadImage = data.data;
+									}else{
+										uni.showToast({
+											title: res.message,
+											icon:'none',
+											duration: 2000
+										});
+									}
+								},
+								fail(err) {
+									uni.hideLoading();
+									console.log(err);
+									uni.showToast({
+										title: '上传失败',
+										icon:'none',
+										duration: 2000
+									});
+								}
+							});
+					}
+				});
+			},
+			uploadConfirm() {
+				var that = this
+				that.$utils.postrequest('api/index/pk_submit', {
+					id: that.uploadId,
+					image: that.uploadImage,
+				}, function(res) {
+					if (res.code == 200) {
+						that.upload = false;
+					} else {
+						that.$utils.showLayer(res.message);
+					}
+				});
+			},
 			release() {
 				this.$utils.postrequest('/api/my/release', {page: this.page}, res => {
 					if (res.code === 200) {
@@ -81,13 +163,22 @@
 				})
 			},
 			toDetail(data) {
-				if (data.status == 0) {
-					this.curItem = data;
+				if (data.status == 2) {
+					this.showUpload(() => {
+						this.upload = true;
+						this.curItem = null;
+					})
+					return;
 				} else {
-					uni.navigateTo({
-					url: "/pages/index/pk?id=" + data.id
-				})
+					this.curItem = data;
 				}
+				// if (data.status == 0) {
+				// 	this.curItem = data;
+				// } else {
+				// 	uni.navigateTo({
+				// 		url: "/pages/index/pk?id=" + data.id
+				// 	})
+				// }
 			},
 			del() {
 				this.$utils.postrequest('/api/my/release_delete', {id: this.curItem.id}, res => {
@@ -133,6 +224,56 @@ page {
 		bottom: 0;
 		left: 0;
 		right: 0;
+	}
+	.uplod {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 1000;
+		padding: 90rpx 30rpx 40rpx;
+		width: 520rpx;
+		height: 690rpx;
+		height: ;
+		background: #fff;
+		border-radius: 50rpx;
+		box-sizing: border-box;
+		text-align: center;
+		image {
+			margin-bottom: 30rpx;
+			width: 460rpx;
+			height: 260rpx;
+		}
+		.upload-tip {
+			margin: auto;
+			font-size: 38rpx;
+			text-align: center;
+			view:last-child {
+				margin: auto;
+				width: 70%;
+				margin-top: 20rpx;
+				font-size: 24rpx;
+				color: #B8B8B8;
+			}
+		}
+		.upload-btn {
+			margin: auto;
+			display: inline-block;
+			padding: 25rpx 110rpx;
+			margin-top: 30rpx;
+			font-size: 38rpx;
+			color: #fff;
+			border-radius: 100rpx;
+			background: linear-gradient(#01DAA5, #03B97E);
+		}
+		.upload-close {
+			position: absolute;
+			bottom: -110rpx;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 50rpx;
+			height: 50rpx;
+		}
 	}
 	.dialog {
 		position: absolute;

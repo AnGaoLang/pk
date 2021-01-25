@@ -84,14 +84,16 @@ export default {
 		if (option.id) {
 			this.getTuijianDetails(option.id);
 		};
+		let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
 		if (this.$socketIo.disconnected) {
 			this.$socketIo.connect();
-		};
-		let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
-		this.$socketIo.on('connect', () => {
-			console.log(123123213)
-		  this.$socketIo.emit('login', uid)
-		});
+			this.$socketIo.on('connect', () => {
+				console.log(123123213)
+			  this.$socketIo.emit('login', uid)
+			});
+		} else {
+			this.$socketIo.emit('login', uid)
+		}
 		this.$socketIo.on('new_msg', (msg) => {
 			console.log('msgpk', msg)
 			let message = msg && JSON.parse(msg);
