@@ -1,6 +1,8 @@
 // const domain = 'http://vr.hualin688.com/'
 // const domain = '/api'
 import urlConfig from '@/common/config.js'
+import socketIo from '../common/socket.js'
+
 const formatTime = date => {
 	const year = new Date(date).getFullYear()
 	const month = new Date(date).getMonth() + 1
@@ -71,11 +73,13 @@ function postrequest(url, data, callback) {
 				uni.showToast({
 					title: '请重新登录',
 					icon: 'none'
-				})
+				});
+				socketIo.disconnect();
+				uni.clearStorageSync();
 				setTimeout(function() {
 					uni.reLaunch({
 						url: '/pages/user/login'
-					})
+					});
 				}, 800)
 			} else {
 				var data = obj.data;
@@ -109,6 +113,8 @@ function request(url, data, callback, basurl) {
 					title: '请重新登录',
 					icon: 'none'
 				})
+				socketIo.disconnect();
+				uni.clearStorageSync();
 				setTimeout(function() {
 					uni.reLaunch({
 						url: 'pages/user/login'
