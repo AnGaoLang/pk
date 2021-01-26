@@ -8,17 +8,15 @@
 		onLaunch: function() {
 		},
 		onShow: function() {
-			let userInfo = uni.getStorageSync('userInfo');
-			let uid = userInfo ? JSON.parse(uni.getStorageSync('userInfo')).id : '';
 			if (this.$socketIo.disconnected) {
 				this.$socketIo.connect();
-				this.$socketIo.on('connect', () => {
-					console.log(111111111)
-				  uid && this.$socketIo.emit('login', uid)
-				});
-			} else {
-				this.$socketIo.emit('login', uid)
 			};
+			this.$socketIo.on('connect', () => {
+				let userInfo = uni.getStorageSync('userInfo');
+				let uid = userInfo ? JSON.parse(uni.getStorageSync('userInfo')).id : '';
+				console.log('app', uid)
+			  uid && this.$socketIo.emit('login', uid)
+			});
 			this.$socketIo.on('new_msg', (msg) => {
 				let message = msg && JSON.parse(msg);
 				console.log(message)

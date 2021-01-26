@@ -75,15 +75,8 @@
 			}
 		},
 		onLoad() {
-			let uid = JSON.parse(uni.getStorageSync('userInfo')).id;
 			if (this.$socketIo.disconnected) {
 				this.$socketIo.connect();
-				this.$socketIo.on('connect', () => {
-					console.log(222222222)
-				  this.$socketIo.emit('login', uid)
-				});
-			} else {
-				this.$socketIo.emit('login', uid)
 			};
 			this.statusBar = uni.getSystemInfoSync().statusBarHeight;
 			this.showUpload();
