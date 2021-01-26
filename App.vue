@@ -6,11 +6,6 @@
 			}
 		},
 		onLaunch: function() {
-		},
-		onShow: function() {
-			if (this.$socketIo.disconnected) {
-				this.$socketIo.connect();
-			};
 			this.$socketIo.on('connect', () => {
 				let userInfo = uni.getStorageSync('userInfo');
 				let uid = userInfo ? JSON.parse(uni.getStorageSync('userInfo')).id : '';
@@ -31,7 +26,12 @@
 					}
 				}
 			});
-			
+		},
+		onShow: function() {
+			console.log(this.$socketIo.disconnected)
+			if (this.$socketIo.disconnected) {
+				this.$socketIo.connect();
+			};
 		},
 		onHide: function() {
 			// console.log('App Hide')

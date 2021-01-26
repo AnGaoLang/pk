@@ -84,9 +84,6 @@ export default {
 		if (option.id) {
 			this.getTuijianDetails(option.id);
 		};
-		if (this.$socketIo.disconnected) {
-			this.$socketIo.connect();
-		};
 		this.$socketIo.on('new_msg', (msg) => {
 			console.log('msgpk', msg)
 			let message = msg && JSON.parse(msg);
@@ -113,6 +110,9 @@ export default {
 		});
 	},
 	onShow() {
+		if (this.$socketIo.disconnected) {
+			this.$socketIo.connect();
+		};
 		if (this.showLoading) {
 			setTimeout(() => {
 				this.showLoading = false;

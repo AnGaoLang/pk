@@ -42,7 +42,7 @@
 		
 		onLoad() {
 			let token = uni.getStorageSync("token");
-			console.log(token);
+			// console.log(token);
 			if (token) {
 				uni.reLaunch({
 					url: '/pages/index/index'
@@ -67,6 +67,11 @@
 				    		uni.setStorageSync('userId', res.data.id);
 				    		uni.setStorageSync('sex', res.data.sex);
 				    		uni.setStorageSync('userInfo', JSON.stringify(res.data));
+								if (this.$socketIo.disconnected) {
+									this.$socketIo.connect();
+								} else {
+									this.$socketIo.emit('login', res.data.id);
+								};
 				    		uni.reLaunch({
 				    			url: '/pages/index/index'
 				    		});
@@ -95,7 +100,7 @@
 					mobile: that.mobile,
 					password: that.password
 				};
-				this.$utils.postrequest('/api/signlogin', paramData, function(res) {
+				this.$utils.postrequest('/api/signlogin', paramData, (res) => {
 					if (res.code == 200) {
 						uni.setStorageSync('token', res.data.token);
 						uni.setStorageSync('avatar', res.data.avatar);
@@ -103,6 +108,11 @@
 						uni.setStorageSync('userId', res.data.id);
 						uni.setStorageSync('sex', res.data.sex);
 						uni.setStorageSync('userInfo', JSON.stringify(res.data));
+						if (this.$socketIo.disconnected) {
+							this.$socketIo.connect();
+						} else {
+							this.$socketIo.emit('login', res.data.id);
+						};
 						uni.reLaunch({
 							url: '/pages/index/index'
 						});

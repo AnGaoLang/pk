@@ -75,9 +75,6 @@
 			}
 		},
 		onLoad() {
-			if (this.$socketIo.disconnected) {
-				this.$socketIo.connect();
-			};
 			this.statusBar = uni.getSystemInfoSync().statusBarHeight;
 			this.showUpload();
 			this.getTuijian();
