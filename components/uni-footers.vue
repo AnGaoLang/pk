@@ -7,7 +7,7 @@
 			</view>
 			<text :class="pag == 1?'active':''">首页</text>
 		</view>
-		<view class="m1" @click="toPages('/pages/index/message')">
+		<view class="m1" @click="toPages('/pages/tim/record')">
 			<view class="footer-icon">
 				<image src="../static/i2-a.png" mode="widthFix" v-if="pag==2"></image>
 				<image src="../static/i2.png" mode="widthFix" v-else></image>

@@ -29,7 +29,7 @@
 			<view class="order-title">游戏主页</view>
 			<view class="order-pic"><image :src="tuijianData.game_home_image" mode="widthFix"></image></view>
 			<div class="d-flex-jsb">
-				<view class="talk-icon d-flex">
+				<view class="talk-icon d-flex" @tap="checkUserToRoom">
 					<image src="../../static/liaotian.png" mode="widthFix"></image>
 					<text>聊天</text>
 				</view>
@@ -123,6 +123,12 @@ export default {
 		}
 	},
 	methods: {
+		checkUserToRoom() {
+			this.$store.commit('createConversationActive', this.tuijianData.user_id)				
+			uni.navigateTo({
+				url: '/pages/tim/room'
+			})
+		},
 		copy(data) {
 			uni.setClipboardData({
 				data: data

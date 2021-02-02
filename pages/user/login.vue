@@ -67,11 +67,13 @@
 				    		uni.setStorageSync('userId', res.data.id);
 				    		uni.setStorageSync('sex', res.data.sex);
 				    		uni.setStorageSync('userInfo', JSON.stringify(res.data));
+								this.timLogin(res.data.id);
 								if (this.$socketIo.disconnected) {
 									this.$socketIo.connect();
 								} else {
 									this.$socketIo.emit('login', res.data.id);
 								};
+								
 				    		uni.reLaunch({
 				    			url: '/pages/index/index'
 				    		});
@@ -108,6 +110,7 @@
 						uni.setStorageSync('userId', res.data.id);
 						uni.setStorageSync('sex', res.data.sex);
 						uni.setStorageSync('userInfo', JSON.stringify(res.data));
+						this.timLogin(res.data.id);
 						if (this.$socketIo.disconnected) {
 							this.$socketIo.connect();
 						} else {
@@ -120,6 +123,26 @@
 						that.$utils.showLayer(res.message);
 					}
 				});
+			},
+			timLogin(userId) {
+				console.log(userId)
+				userId = userId.toString();
+				let promise = this.tim.login({
+					userID: userId,
+					userSig: this.genTestUserSig(userId.toString()).userSig
+				});
+				promise
+					.then(resData => {
+						//登录成功后 更新登录状态
+						this.$store.commit('toggleIsLogin', true);
+						//自己平台的用户基础信息
+						//tim 返回的用户信息
+						uni.setStorageSync('userTIMInfo', JSON.stringify(resData.data));
+						console.log("登录成功！！！！");
+					})
+					.catch(err => {
+						console.warn('login error:', err); // 登录失败的相关信息
+					});
 			},
 			toReg() {
 				uni.navigateTo({

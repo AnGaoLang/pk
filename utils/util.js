@@ -74,8 +74,8 @@ function postrequest(url, data, callback) {
 					title: '请重新登录',
 					icon: 'none'
 				});
-				socketIo.disconnect();
 				uni.clearStorageSync();
+				socketIo.disconnect();
 				setTimeout(function() {
 					uni.reLaunch({
 						url: '/pages/user/login'
@@ -106,15 +106,15 @@ function request(url, data, callback, basurl) {
 		},
 		success: function(obj) {
 			// debugger
-			console.log('jinlaile', obj.data.code == 301)
+			// console.log('jinlaile', obj.data.code == 301)
 			wx.stopPullDownRefresh()
 			if (obj.data.code == 301) {
 				uni.showToast({
 					title: '请重新登录',
 					icon: 'none'
 				})
-				socketIo.disconnect();
 				uni.clearStorageSync();
+				socketIo.disconnect();
 				setTimeout(function() {
 					uni.reLaunch({
 						url: 'pages/user/login'

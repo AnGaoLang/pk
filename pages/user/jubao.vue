@@ -48,7 +48,7 @@
 				complain: '',
 			};
 		},
-		onShow() {
+		onLoad() {
 			this.userId = JSON.parse(uni.getStorageSync('userInfo')).id;
 			this.getGuBaoDetail(this.userId)
 		},

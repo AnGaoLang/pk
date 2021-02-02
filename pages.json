@@ -180,11 +180,18 @@
             
         }
         ,{
-            "path" : "pages/index/message",
+            "path" : "pages/tim/record",
 			"style": {
 				"navigationBarTitleText": "",
 				"navigationStyle": "custom"
 			}
+        },{
+            "path" : "pages/tim/room",
+						"style": {
+							"navigationBarBackgroundColor": "#fff",
+							"navigationBarTitleText": "聊天"
+							// "navigationStyle": "custom"
+						}
         }
         ,{
             "path" : "pages/order/pub2",

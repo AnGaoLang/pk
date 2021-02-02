@@ -104,6 +104,7 @@
 			loginOut(){
 				this.$socketIo.disconnect()
 				uni.clearStorageSync();
+				this.tim.logout();
 				uni.reLaunch({
 					url: '/pages/user/login'
 				})

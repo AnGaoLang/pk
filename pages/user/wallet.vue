@@ -44,7 +44,7 @@
 						</view>
 					</view>
 					<view class="record-r d-flex">
-						<text>{{ Number(d.price)>0?'+':'-'}}</text>
+						<!-- <text>{{ Number(d.price)>0?'+':'-'}}</text> -->
 						<view>{{d.price}}</view>
 					</view>
 				</view>
