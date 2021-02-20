@@ -35,7 +35,7 @@
 						<!-- 别人发出的消息 -->
 						<view class="other" v-else>
 							<!-- 左-头像 -->
-							<view class="left">
+							<view class="left" @tap="goPk(toUserInfo)">
 								<image :src="toUserInfo && toUserInfo.img"></image>
 							</view>
 							<!-- 右-用户名称-时间-消息 -->
@@ -229,15 +229,18 @@
 			this.conversationActive = this.$store.state.conversationActive
 			this.TIM = this.$TIM
 			//获取聊天对象的用户信息
-			let imResponse = await this.tim.getUserProfile({
-			  userIDList: [this.toUserId] // 请注意：即使只拉取一个用户的资料，也需要用数组类型，例如：userIDList: ['user1']
+			console.log(this.toUserId)
+			let imResponse = this.tim.getUserProfile({
+			  userIDList: [this.toUserId.toString()] // 请注意：即使只拉取一个用户的资料，也需要用数组类型，例如：userIDList: ['user1']
 			});
-			this.toUserInfo = {
-				user: imResponse.data[0].nick,
-				userId: imResponse.data[0].userID,
-				img: imResponse.data[0].avatar,
-			};
-			console.log('toUserInfo', this.toUserInfo)
+			console.log(imResponse)
+			imResponse.then(res => {
+				this.toUserInfo = {
+					user: res.data[0].nick,
+					userId: res.data[0].userID,
+					img: res.data[0].avatar,
+				};
+			})
 			this.getMsgList();
 			//语音自然播放结束
 			this.AUDIO.onEnded((res)=>{
@@ -269,6 +272,17 @@
 			});
 		},
 		methods:{
+			goPk(toUserInfo) {
+				this.$utils.postrequest('api/pk/useIdDetail', {user_id: toUserInfo.userId}, (res) => {
+					if (res.code == 200 && !!res.data.id) {
+						uni.redirectTo({
+							url: `/pages/index/pk?id=${res.data.id}`
+						})
+					} else {
+						that.$utils.showLayer('未查询到相关用户的pk');
+					}
+				});
+			},
 			//聊天的节点加上外层的div
 			nodesFliter(str){
 				let nodeStr = '<div style="align-items: center;word-wrap:break-word;">'+str+'</div>' 
@@ -318,9 +332,7 @@
 			getMsgList(){
 				// 历史消息列表
 					let conversationID = this.conversationActive.conversationID
-					console.log(conversationID)
 					let promise = this.tim.getMessageList({conversationID: conversationID, count: this.count});
-					console.log(this.tim, promise)
 					promise.then((res)=> {
 						this.$store.commit('pushCurrentMessageList',  res.data.messageList)
 					  this.nextReqMessageID =  res.data.nextReqMessageID // 用于续拉，分页续拉时需传入该字段。
@@ -399,8 +411,6 @@
 							uni.getImageInfo({
 								src: res.tempFilePaths[i],
 								success: (image)=>{
-									console.log(image.width);
-									console.log(image.height);
 									let msg = {url:res.tempFilePaths[i],w:image.width,h:image.height};
 									this.sendMsg(msg,'img');
 								}
@@ -444,7 +454,6 @@
 			//替换表情符号为图片
 			replaceEmoji(str){
 				let replacedStr = str.replace(/\[([^(\]|\[)]*)\]/g,(item, index)=>{
-					console.log("item: " + item);
 					for(let i=0;i<this.emojiList.length;i++){
 						let row = this.emojiList[i];
 						for(let j=0;j<row.length;j++){
@@ -454,7 +463,6 @@
 								//比如你上传服务器后，你的100.gif路径为https://www.xxx.com/emoji/100.gif 则替换onlinePath填写为https://www.xxx.com/emoji/
 								let onlinePath = 'https://s2.ax1x.com/2019/04/12/'
 								let imgstr = '<img src="'+onlinePath+this.onlineEmoji[EM.url]+'">';
-								console.log("imgstr: " + imgstr);
 								return imgstr;
 							}
 						}
@@ -465,8 +473,6 @@
 			
 			// 发送消息
 			sendMsg(content,type){
-				console.log(content,type)
-				console.log(this.toUserId)
 				let message = this.tim.createTextMessage({
 				  to: this.toUserId.toString(),
 				  conversationType: 'C2C',
@@ -538,7 +544,6 @@
 						if(!msg.content.isReceived){
 							// {type:"system",msg:{id:8,type:"redEnvelope",content:{text:"你领取了售后客服008的红包"}}},
 							this.sendSystemMsg({text:"你领取了"+(msg.userinfo.uid==this.myuid?"自己":msg.userinfo.username)+"的红包"},'redEnvelope');
-							console.log("this.msgList[index]: " + JSON.stringify(this.msgList[index]));
 							this.msgList[index].msg.content.isReceived = true;
 						}
 					}
@@ -638,7 +643,6 @@
 			recordEnd(e){
 				clearInterval(this.recordTimer);
 				if(!this.willStop){
-					console.log("e: " + JSON.stringify(e));
 					let msg = {
 						length:0,
 						url:e.tempFilePath

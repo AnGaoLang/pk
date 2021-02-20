@@ -127,6 +127,8 @@
 				}
 				this.$utils.postrequest("/api/my/useredit", obj , res => {
 					if (res.code === 200) {
+						this.getUser();
+					
 						uni.showToast({
 							title: '修改成功',
 							icon: 'none'
@@ -144,6 +146,10 @@
 				this.$utils.request("/api/my/useredit", {}, res => {
 					if (res.code === 200) {
 						this.userInfo = res.data;
+						this.tim.updateMyProfile({
+						  nick: this.userInfo.name,
+						  avatar: this.userInfo.avatar,
+						});
 					}
 				})
 			}

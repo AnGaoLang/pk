@@ -183,23 +183,26 @@
 							pk_id: this.submit.pk_id,
 						};
 						this.$utils.request('/', receivingOrder, (res) => {
-							console.log(receivingOrder, res)
+							if (res.code == 200) {
+								var pages=getCurrentPages(), prevPage=null;
+								if(pages.length>1){
+									prevPage=pages[pages.length-2];
+								}
+								if(prevPage){
+									// #ifdef APP-PLUS || H5
+										prevPage.$vm.showLoading=true;
+									// #endif
+									// #ifdef MP-WEIXIN
+										prevPage.setData({
+											showLoading : true
+										})
+									// #endif
+								}
+								uni.navigateBack();
+							} else {
+								this.$utils.showLayer(res.message);
+							}
 						}, 'http://45.125.45.234:5557');
-						var pages=getCurrentPages(), prevPage=null;
-						if(pages.length>1){
-							prevPage=pages[pages.length-2];
-						}
-						if(prevPage){
-							// #ifdef APP-PLUS || H5
-								prevPage.$vm.showLoading=true;
-							// #endif
-							// #ifdef MP-WEIXIN
-								prevPage.setData({
-									showLoading : true
-								})
-							// #endif
-						}
-						uni.navigateBack();
 					} else {
 						that.$utils.showLayer(res.message);
 					}

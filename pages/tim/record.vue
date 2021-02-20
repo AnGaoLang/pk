@@ -60,7 +60,7 @@
 			</view>
 		</view> -->
 		
-		<uni-footers :pag='2'></uni-footers>
+		<uni-footers :pag='2' :unRead="unRead"></uni-footers>
 	</view>
 </template>
 
@@ -86,7 +86,12 @@
 				isLogin: state => state.isLogin,
 				isSDKReady: state => state.isSDKReady,
 				conversationList: state => state.conversationList,
-			})
+			}),
+			unRead() {
+				return this.userAddConversationList.reduce((total, item) => {
+					return total + Number(item.conversation.unreadCount) || 0
+				}, 0)
+			},
 		},
 		watch: {
 			isSDKReady(val) {
@@ -96,6 +101,7 @@
 				}
 			},
 			conversationList(val){
+				console.log(val)
 				this.getUserInfo(val)
 			}
 
@@ -136,7 +142,6 @@
 				let promise = this.tim.getConversationList();
 				promise.then((res) => {
 					let conversationList = res.data.conversationList; // 会话列表，用该列表覆盖原有的会话列表
-					console.log(conversationList)
 					if (conversationList.length) {
 						//将返回的会话列表拼接上 用户的基本资料  
 						//说明：如果已经将用户信息 提交到tim服务端了 就不需要再次拼接
@@ -150,7 +155,6 @@
 			getUserInfo(conversationList) {
 				 this.userAddConversationList = []
 				conversationList.forEach(item => {
-					console.log(item)
 					let obj = {}
 					obj.conversation = item;
 					obj.user = {
@@ -174,7 +178,6 @@
 					url: './room'
 				})
 			}
-
 		},
 		onShow() {
 			if (this.isSDKReady) {

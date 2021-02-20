@@ -1,69 +1,72 @@
 <template>
 	<view class="border-top">
-		<uni-status-bar></uni-status-bar>
-		<uni-nav-bar left-icon="back" title="PK详情" @clickLeft="back" @clickRight="jubao">
+		<!-- <uni-status-bar style="background: #fff;"></uni-status-bar> -->
+		<uni-nav-bar :style="`;position: fixed;z-index: 10000;top:${statusBar}px;`" left-icon="back" title="PK详情" @clickLeft="back" @clickRight="jubao">
 		    <view slot="right">
 				<image src="/static/jb.png" mode="widthFix" class="right-icon"></image>
 			</view>
 		</uni-nav-bar>
-		<view class="user-info order-item d-flex">
-			<view class="order-l"><image :src="tuijianData.avatar" mode="widthFix"></image></view>
-			<view class="order-r d-flex-jsb">
-				<view class="order-info">
-					<view class="order-name">游戏名称：{{ tuijianData.pk_name }}<view class="greenBg" @tap="copy(tuijianData.pk_name)">一键复制</view></view>
-					<view class="order-label d-flex">
-						<view>{{ tuijianData.pk_format }}</view>
-						<view>{{ tuijianData.type_name }}</view>
+		<view :style="`height:${statusBar + 44}px`"></view>
+		<scroll-view scroll-y :style="`padding-bottom: 30rpx;height: calc(100% - ${statusBar + 44}px);`">
+			<view class="user-info order-item d-flex">
+				<view class="order-l"><image :src="tuijianData.avatar" mode="widthFix"></image></view>
+				<view class="order-r d-flex-jsb">
+					<view class="order-info">
+						<view class="order-name">游戏名称：{{ tuijianData.pk_name }}<view class="greenBg" @tap="copy(tuijianData.pk_name)">一键复制</view></view>
+						<view class="order-label d-flex">
+							<view>{{ tuijianData.pk_format }}</view>
+							<view>{{ tuijianData.type_name }}</view>
+						</view>
+					</view>
+					<view class="order-price d-flex">
+						<view class="pk-icon"><image src="../../static/pk.png" mode="widthFix"></image></view>
+						<view class="get-s d-flex">
+							<image src="../../static/jia.png" mode="widthFix"></image>
+							<text>{{ tuijianData.pk_price }}</text>
+						</view>
 					</view>
 				</view>
-				<view class="order-price d-flex">
-					<view class="pk-icon"><image src="../../static/pk.png" mode="widthFix"></image></view>
-					<view class="get-s d-flex">
-						<image src="../../static/jia.png" mode="widthFix"></image>
-						<text>{{ tuijianData.pk_price }}</text>
+			</view>
+			<view class="order-data">
+				<view class="order-title">游戏主页</view>
+				<view class="order-pic"><image :src="tuijianData.game_home_image" mode="widthFix"></image></view>
+				<div class="d-flex-jsb">
+					<view class="talk-icon d-flex" @tap="checkUserToRoom">
+						<image src="../../static/liaotian.png" mode="widthFix"></image>
+						<text>聊天</text>
+					</view>
+					<view class="pub-time">发布时间:{{ tuijianData.created_at }}</view>
+				</div>
+				<view class="note-info">注意事项</view>
+				<view class="note-text">
+					<rich-text :nodes="pk_explain" class="rich-txt"></rich-text>
+					<!-- <view class="note-f">1.请到王者→设置→隐私设置→战绩显示→打开</view>
+					<view>2.如发现游戏主页面与游戏ID不符请放弃该PK</view>
+					<view>3.请勿脱离平台交易</view>
+					<view>4.可以选择双方确定开始PK后在进入游戏，客服会根据实际的比赛记录判定，如果无属实记录会自动退回余额</view> -->
+				</view>
+				<view class="pk" @click="showLoadingDialog">点击PK</view>
+			</view>
+			<view v-show="showLoading" class="cover">
+				<view class="content">
+					<view class="title">{{showLoadText || '等待确认中'}}</view>
+					<view class="dialog-info">
+						{{showLoadContent || '正在等待对手玩家确认开始 请稍后.'}}
+					</view>
+					<view v-if="!showLoadText" class="loading">
+						<view :class="{ active: time > 0 }"></view>
+						<view :class="{ active: time > 1 }"></view>
+						<view :class="{ active: time > 2 }"></view>
+						<view :class="{ active: time > 3 }"></view>
+						<view :class="{ active: time > 4 }"></view>
+						<view :class="{ active: time > 5 }"></view>
+					</view>
+					<view v-else style="margin: auto;width: 44rpx;height:44rpx;" @tap="showLoading = false">
+						<image style="width: 100%;height:100%;" src="../../static/cuowublack.png"></image>
 					</view>
 				</view>
 			</view>
-		</view>
-		<view class="order-data">
-			<view class="order-title">游戏主页</view>
-			<view class="order-pic"><image :src="tuijianData.game_home_image" mode="widthFix"></image></view>
-			<div class="d-flex-jsb">
-				<view class="talk-icon d-flex" @tap="checkUserToRoom">
-					<image src="../../static/liaotian.png" mode="widthFix"></image>
-					<text>聊天</text>
-				</view>
-				<view class="pub-time">发布时间:{{ tuijianData.created_at }}</view>
-			</div>
-			<view class="note-info">注意事项</view>
-			<view class="note-text">
-				<rich-text :nodes="pk_explain" class="rich-txt"></rich-text>
-				<!-- <view class="note-f">1.请到王者→设置→隐私设置→战绩显示→打开</view>
-				<view>2.如发现游戏主页面与游戏ID不符请放弃该PK</view>
-				<view>3.请勿脱离平台交易</view>
-				<view>4.可以选择双方确定开始PK后在进入游戏，客服会根据实际的比赛记录判定，如果无属实记录会自动退回余额</view> -->
-			</view>
-			<view class="pk" @click="showLoadingDialog">点击PK</view>
-		</view>
-		<view v-show="showLoading" class="cover">
-			<view class="content">
-				<view class="title">{{showLoadText || '等待确认中'}}</view>
-				<view class="dialog-info">
-					{{showLoadContent || '正在等待对手玩家确认开始 请稍后.'}}
-				</view>
-				<view v-if="!showLoadText" class="loading">
-					<view :class="{ active: time > 0 }"></view>
-					<view :class="{ active: time > 1 }"></view>
-					<view :class="{ active: time > 2 }"></view>
-					<view :class="{ active: time > 3 }"></view>
-					<view :class="{ active: time > 4 }"></view>
-					<view :class="{ active: time > 5 }"></view>
-				</view>
-				<view v-else style="margin: auto;width: 44rpx;height:44rpx;" @tap="showLoading = false">
-					<image style="width: 100%;height:100%;" src="../../static/cuowublack.png"></image>
-				</view>
-			</view>
-		</view>
+		</scroll-view>
 	</view>
 </template>
 
@@ -72,6 +75,7 @@ let timer = null;
 export default {
 	data() {
 		return {
+			statusBar: '',
 			showLoading: false,
 			showLoadText: '',
 			showLoadContent: '',
@@ -110,6 +114,7 @@ export default {
 		});
 	},
 	onShow() {
+		this.statusBar = uni.getSystemInfoSync().statusBarHeight;
 		if (this.$socketIo.disconnected) {
 			this.$socketIo.connect();
 		};
@@ -124,7 +129,9 @@ export default {
 	},
 	methods: {
 		checkUserToRoom() {
-			this.$store.commit('createConversationActive', this.tuijianData.user_id)				
+			console.log(this.tuijianData.user_id)
+			this.$store.commit('createConversationActive', this.tuijianData.user_id)
+			console.log(this.tuijianData.user_id)
 			uni.navigateTo({
 				url: '/pages/tim/room'
 			})
@@ -174,12 +181,14 @@ export default {
 </script>
 
 <style lang="less">
+	page {
+		height: 100%;
+	}
 	.right-icon{
 		width: 24rpx;
 	}
 .border-top {
-	// border-top: 20rpx #f4f6f8 solid;
-	overflow: hidden;
+	height: 100%;
 }
 
 .order-item {

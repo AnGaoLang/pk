@@ -57,9 +57,11 @@
 				  success: (loginRes) => {
 				    console.log(loginRes.authResult);
 				    let paramData = {
-				    	code: loginRes.code,
+							access_token: loginRes.authResult.access_token,
+				    	openid: loginRes.authResult.openid,
 				    };
 				    this.$utils.request('/api/login', paramData, (res) => {
+							console.log(res)
 				    	if (res.code == 200) {
 				    		uni.setStorageSync('token', res.data.token);
 				    		uni.setStorageSync('avatar', res.data.avatar);

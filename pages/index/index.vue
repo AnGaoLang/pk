@@ -27,7 +27,7 @@
 		<view class="banner" style="height: 120px;overflow: hidden;">
 			<image :src="bannerImg" style="width:100%;height: 120px;" mode="widthFix"></image>
 		</view>
-		<view class="order-list">
+		<view class="order-list" style="margin-bottom: 120rpx;">
 			<view class="order-item d-flex-jsb" v-for="(item,index) in tuijianDataList" :key="item.id" @click="toDetail(item)">
 				<view class="order-l">
 					<image :src="item.avatar" mode="widthFix"></image>
@@ -150,6 +150,7 @@
 					image: that.uploadImage,
 				}, function(res) {
 					if (res.code == 200) {
+						that.$utils.showLayer('上传截图成功');
 						that.upload = false;
 					} else {
 						that.$utils.showLayer(res.message);

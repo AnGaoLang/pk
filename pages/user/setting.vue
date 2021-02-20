@@ -102,9 +102,9 @@
 			},
 			// 退出登录
 			loginOut(){
-				this.$socketIo.disconnect()
 				uni.clearStorageSync();
 				this.tim.logout();
+				this.$socketIo.disconnect()
 				uni.reLaunch({
 					url: '/pages/user/login'
 				})

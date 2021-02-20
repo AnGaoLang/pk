@@ -62,8 +62,6 @@ const store = new Vuex.Store({
 		  } else if (data.conversationID === state.conversationActive.conversationID) {
 		    state.currentMessageList = [...state.currentMessageList, data]
 		  }
-		  console.log('1111')
-		  	console.log( state.currentMessageList)
 		},
 		/**
 		 * 滑到顶部请求更多的历史消息

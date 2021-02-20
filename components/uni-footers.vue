@@ -12,7 +12,10 @@
 				<image src="../static/i2-a.png" mode="widthFix" v-if="pag==2"></image>
 				<image src="../static/i2.png" mode="widthFix" v-else></image>
 			</view>
-			<text :class="pag == 2?'active':''">消息</text>
+			<text :class="pag == 2?'active':''">
+				消息
+				<!-- <text v-if="unRead" class="circle">{{unRead}}</text> -->
+			</text>
 		</view>
 		<view class="m2" @click="toPages('/pages/order/pub')">
 			<view class="footer-icon">
@@ -39,7 +42,11 @@
 <script>
 	export default {
 		props:{
-			pag:{}
+			pag:{},
+			unRead: {
+				type: Number,
+				default: 0
+			}
 		},
 		data() {
 			return {
@@ -102,5 +109,17 @@
 				width: 100%;
 			}
 		}
+	}
+	.circle{
+		padding: 0 8rpx;
+		height: 34rpx;
+		background: #FF4335;
+		border-radius: 50%;
+		text-align: center;
+		font-size: 25rpx;
+		font-family: SimHei;
+		color: #FFFFFF;
+		line-height: 34rpx;
+		margin-right: 10rpx;
 	}
 </style>

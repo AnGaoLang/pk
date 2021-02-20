@@ -109,6 +109,8 @@
 				})
 			},
 			withdrawAdd() {
+				this.show = true;
+				return;
 				let {wdl_type, wdl_price, money} = this;
 				if (wdl_type == 1) {
 					this.show = true;
