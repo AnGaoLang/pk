@@ -1,5 +1,5 @@
 {
-    "name" : "pk_app",
+    "name" : "竞技虾",
     "appid" : "__UNI__F5B861E",
     "description" : "",
     "versionName" : "1.0.0",
@@ -60,14 +60,14 @@
                 "ad" : {},
                 "oauth" : {
                     "weixin" : {
-                        "appid" : "wxec196ca61616173c",
-                        "appsecret" : "c5e7f94cc73bd8983b1d96e7a49f9c02",
+                        "appid" : "wxc556f26fcb6fcd69",
+                        "appsecret" : "85e4ea118eabfdacec0fd10d1572e476",
                         "UniversalLinks" : ""
                     }
                 },
                 "share" : {
                     "weixin" : {
-                        "appid" : "wxec196ca61616173c",
+                        "appid" : "wxc556f26fcb6fcd69",
                         "UniversalLinks" : ""
                     }
                 },
@@ -77,7 +77,7 @@
                     },
                     "weixin" : {
                         "__platform__" : [ "ios", "android" ],
-                        "appid" : "wxec196ca61616173c",
+                        "appid" : "wxc556f26fcb6fcd69",
                         "UniversalLinks" : ""
                     }
                 }

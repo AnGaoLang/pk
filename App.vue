@@ -62,6 +62,7 @@
 			},
 			onReceiveMessage({data: messageList}) {
 				// this.handleAt(messageList);
+				console.log('messageList', messageList)
 				this.$store.commit("pushCurrentMessageList", messageList);
 			},
 			//根据消息列表请求聊天对象的用户信息 并完成数据拼接
@@ -87,6 +88,11 @@
 			},
 		},
 		onLaunch: function() {
+			this.$socketIo.on('disconnect', (msg) => {
+				if (uni.getStorageSync('userInfo')) {
+					this.$socketIo.connect();
+				};
+			});
 			this.$socketIo.on('connect', () => {
 				let userInfo = uni.getStorageSync('userInfo');
 				let uid = userInfo ? JSON.parse(uni.getStorageSync('userInfo')).id : '';

@@ -24,7 +24,7 @@
 		</view>
 		<view class="pay-title">请选择付款方式</view>
 		<view class="pay-choose">
-			<view class="pay-item d-flex-jsb" @click="setType(1)">
+			<!-- <view class="pay-item d-flex-jsb" @click="setType(1)">
 				<view class="pay-l d-flex">
 					<image src='../../static/wx1.png' mode="widthFix"></image>
 					<view class="pay-item-info">
@@ -36,7 +36,7 @@
 					<image v-if="wdl_type === 1" src="../../static/checked.png" mode="widthFix"></image>
 					<image v-if="wdl_type === 2" src="../../static/check-2.png" mode="widthFix"></image>
 				</view>
-			</view>
+			</view> -->
 			<view class="pay-item d-flex-jsb" @click="setType(2)">
 				<view class="pay-l d-flex">
 					<image src='../../static/zfb.png' mode="widthFix"></image>
@@ -76,7 +76,7 @@
 				show: false,
 				wdl_price: '',
 				money: 0,
-				wdl_type: 1,
+				wdl_type: 2,
 			};
 		},
 		
@@ -109,8 +109,6 @@
 				})
 			},
 			withdrawAdd() {
-				this.show = true;
-				return;
 				let {wdl_type, wdl_price, money} = this;
 				if (wdl_type == 1) {
 					this.show = true;
