@@ -119,7 +119,7 @@
 		justify-content: center;
 	}
 	.dialog-head-text {
-		font-size: 42rpx;
+		font-size: 21px;
 		color: #fff;
 		line-height: 100rpx;
 		text-align: center;
@@ -160,15 +160,15 @@
 		align-items: center;
 	}
 	.avator-right-title-text {
-		font-size: 34rpx;
+		font-size: 17px;
 		font-weight: bold;
 	}
 	.copy-text {
-		font-size: 25rpx;
+		font-size: 13px;
 		color: #fff;
 	}
 	.grade-text {
-		font-size: 25rpx;
+		font-size: 13px;
 		color: #fff;
 	}
 	.dialog-image {
@@ -185,10 +185,10 @@
 	.dialog-detail-tips {
 		color: #FD3708;
 		margin-bottom: 10rpx;
-		font-size: 28rpx;
+		font-size: 14px;
 	}
 	.dialog-detail-warn {
-		font-size: 28rpx;
+		font-size: 14px;
 	}
 	.dialog-bottom {
 		display: flex;
@@ -207,7 +207,7 @@
 	}
 	.dialog-cancel-text,.dialog-confirm-text {
 		color: #5B3A3B;
-		font-size: 32rpx;
+		font-size: 16px;
 	}
 	.dialog-confirm-text {
 		color: #fff;
