@@ -11,7 +11,7 @@
 						<view class="num">ID:{{t.id}}</view>
 					</view>
 				</view>
-				<view class="right">
+				<view class="right" @tap="checkUserToRoom(t.id)">
 					<text>聊天</text>
 				</view>
 			</view>
@@ -37,6 +37,12 @@
 			this.getFriends();
 		},
 		methods:{
+			checkUserToRoom(id) {
+				this.$store.commit('createConversationActive', id)
+				uni.navigateTo({
+					url: '/pages/tim/room'
+				})
+			},
 			// 绑定邀请码
 			bindInput(){
 				this.$utils.postrequest('/api/my/invitationadduser', {user_code: this.invitCode}, res => {

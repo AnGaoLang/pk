@@ -88,7 +88,7 @@
                 "android" : {
                     "xhdpi" : "static/open.png",
                     "hdpi" : "static/open.png",
-                    "xxhdpi" : "static/open.png"
+                    "xxhdpi" : "static/big-open.png"
                 },
                 "ios" : {
                     "iphone" : {

@@ -65,7 +65,7 @@
 					pk_id: this.dialog.pk_id,
 				}, (res) => {
 					this.hide();
-				}, 'http://45.125.45.234:5557');
+				}, 'http://139.155.33.218:5557');
 			},
 			confirmDialog() {
 				utils.request('/', {
@@ -74,7 +74,7 @@
 					pk_id: this.dialog.pk_id,
 				}, (res) => {
 					this.hide();
-				}, 'http://45.125.45.234:5557');
+				}, 'http://139.155.33.218:5557');
 			},
 		},
 	}

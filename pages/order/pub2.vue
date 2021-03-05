@@ -202,7 +202,7 @@
 							} else {
 								this.$utils.showLayer(res.message);
 							}
-						}, 'http://45.125.45.234:5557');
+						}, 'http://139.155.33.218:5557');
 					} else {
 						that.$utils.showLayer(res.message);
 					}

@@ -266,6 +266,7 @@
 		border-radius: 57px;
 		color: #FFFFFF;
 		margin-top: 53rpx;
+		margin-bottom: 120rpx;
 	}
 
 	.note-f {

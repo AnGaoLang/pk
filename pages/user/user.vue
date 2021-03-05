@@ -114,7 +114,7 @@
 			};
 		},
 		
-		onLoad() {
+		onShow() {
 			this.myinfo();
 			this.getKefu();
 		},

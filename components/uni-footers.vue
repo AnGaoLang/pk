@@ -14,7 +14,7 @@
 			</view>
 			<text :class="pag == 2?'active':''">
 				消息
-				<!-- <text v-if="unRead" class="circle">{{unRead}}</text> -->
+				<text v-if="unRead" class="circle">{{unRead}}</text>
 			</text>
 		</view>
 		<view class="m2" @click="toPages('/pages/order/pub')">
@@ -40,27 +40,62 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
+	
 	export default {
-		props:{
-			pag:{},
-			unRead: {
-				type: Number,
-				default: 0
-			}
-		},
 		data() {
 			return {
-
-			};
+				userAddConversationList: [],
+				unRead: 0,
+			}
 		},
-		
+		props:{
+			pag:{},
+			// unRead: {
+			// 	type: Number,
+			// 	default: 0
+			// },
+		},
+		computed: {
+			...mapState({
+				isLogin: state => state.isLogin,
+				isSDKReady: state => state.isSDKReady,
+				conversationList: state => state.conversationList,
+			}),
+		},
 		methods: {
 			toPages(url) {
 				uni.reLaunch({
 					url,
 				})
+			},
+			//根据消息列表请求聊天对象的用户信息 并完成数据拼接
+			getUserInfo(conversationList) {
+			 this.userAddConversationList = []
+				conversationList.forEach(item => {
+					let obj = {}
+					obj.conversation = item;
+					obj.user = {
+						user: item.userProfile.nick,
+						userId: item.userProfile.userID,
+						img: item.userProfile.avatar,
+					}
+					this.userAddConversationList.push(JSON.parse(JSON.stringify(obj)))
+				});
+				this.unRead = this.userAddConversationList.reduce((total, item) => {
+					return total + Number(item.conversation.unreadCount) || 0
+				}, 0)
+			},
+		},
+		watch: {
+			conversationList(val){
+				console.log('conversationList', val)
+				this.getUserInfo(val)
 			}
-		}
+		
+		},
 	}
 </script>
 

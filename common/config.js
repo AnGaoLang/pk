@@ -1,5 +1,5 @@
 
-var url_config = "http://139.155.33.218";
+var url_config = "http://www.kuailan.life/";
 // var url_config = "/api";
 
 
